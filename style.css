@@ -1,0 +1,301 @@
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Poppins',sans-serif;
+}
+
+body{
+    background:#f5f7fa;
+    padding:20px;
+}
+
+.header{
+    background:white;
+    border-radius:18px;
+    padding:20px 30px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    box-shadow:0 5px 15px rgba(0,0,0,0.1);
+}
+
+.left{
+    display:flex;
+    align-items:center;
+    gap:20px;
+}
+
+.left img{
+    width:70px;
+    height:70px;
+}
+
+.left h1{
+    color:#0f2b75;
+    font-size:34px;
+}
+
+.left p{
+    color:#0099b8;
+    font-size:22px;
+}
+
+.right{
+    display:flex;
+    gap:30px;
+    font-size:20px;
+    color:#163a8c;
+}
+.container{
+    margin-top:20px;
+    display:grid;
+    grid-template-columns: 38% 62%;
+    gap:20px;
+}.farm-card{
+    background:#fff;
+    border-radius:18px;
+    padding:25px;
+    box-shadow:0 5px 15px rgba(0,0,0,0.1);
+    min-height:400px;
+}
+
+.farm-card h2{
+    color:#232fd3;
+    font-size:28px;
+    margin-bottom:25px;
+}
+.farm-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:18px;
+}
+
+.info-box{
+    background:#f8fbff;
+    border:1px solid #e5e5e5;
+    border-radius:12px;
+    padding:18px;
+
+    display:flex;
+    align-items:center;
+    gap:18px;
+}
+
+.info-box h3{
+    font-size:16px;
+    color:#666;
+    margin-bottom:8px;
+}
+
+.info-box p{
+    font-size:20px;
+    color:#222;
+    margin:0;
+}
+.sensor-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:18px;
+}
+
+.sensor-card{
+    background:#fff;
+    border-radius:20px;
+    padding:20px;
+    text-align:center;
+    border-top:5px solid #20c55e;
+    box-shadow:0 4px 10px rgba(0,0,0,0.08);
+}
+
+.sensor-card h3{
+    font-size:30px;
+    margin-bottom:175px;
+}
+
+.sensor-card h1{
+    font-size:30px;
+    color:#1f2937;
+}
+
+.sensor-card p{
+    font-size:30px;
+    color:#666;
+}
+/* ================= DEVICE STATUS ================= */
+
+.device-card,
+.alert-card{
+    background:#fff;
+    border-radius:18px;
+    padding:25px;
+    box-shadow:0 5px 15px rgba(0,0,0,0.08);
+}
+.device-card{
+    min-height:340px;
+}
+
+.device-card h2,
+.alert-card h2{
+    color:#1565ff;
+    font-size:22px;
+    margin-bottom:25px;
+}
+
+.device-grid{
+    display:flex;
+    justify-content:space-around;
+    align-items:center;
+}
+
+.device-item{
+    text-align:center;
+}
+
+.device-item i{
+    font-size:40px;
+    color:#1565ff;
+    margin-bottom:15px;
+}
+
+.device-item h3{
+    font-size:18px;
+    margin-bottom:10px;
+}
+
+.device-item p{
+    font-size:18px;
+}
+
+.online{
+    color:#18b63e;
+    font-weight:600;
+}
+
+/* ================= ALERTS ================= */
+
+.alert{
+    display:flex;
+    align-items:center;
+    gap:15px;
+    padding:16px;
+    border-radius:12px;
+    margin-bottom:15px;
+    font-size:17px;
+}
+
+.alert i{
+    font-size:20px;
+}
+
+.warning{
+    background:#fff4d6;
+    color:#d48806;
+}
+
+.success{
+    background:#e8f8ec;
+    color:#1b9e46;
+}
+.alert{
+    display:flex;
+    align-items:center;
+    gap:15px;
+    padding:16px 20px;
+    margin-bottom:15px;
+    border-radius:12px;
+}
+
+.alert strong{
+    font-size:17px;
+    display:block;
+    margin-bottom:3px;
+}
+
+.alert div{
+    font-size:15px;
+    line-height:1.4;
+}
+
+.alert i{
+    font-size:24px;
+    width:35px;
+    text-align:center;
+}
+
+
+.alert{
+    display:flex;
+    align-items:flex-start;
+    gap:15px;
+    padding:15px;
+    margin-bottom:15px;
+    border-radius:10px;
+}
+
+.alert.warning{
+    background:#fff8e6;
+    border-left:5px solid #ff9800;
+}
+
+.alert i{
+    font-size:24px;
+    color:#ff9800;
+    margin-top:4px;
+}
+
+.alert strong{
+    display:block;
+    font-size:15px;
+    color:#d32f2f;
+    margin-bottom:5px;
+}
+
+.alert p{
+    margin:5px 0 0;
+    font-size:13px;
+    color:#555;
+    line-height:1.5;
+}
+/* -------- Alerts Section -------- */
+
+.alerts-card h2{
+    font-size:20px;
+    color:#2563eb;
+    margin-bottom:20px;
+}
+
+.alert-item{
+    display:flex;
+    align-items:flex-start;
+    gap:15px;
+    background:#fff8e6;
+    border-left:5px solid #ff9800;
+    border-radius:10px;
+    padding:15px;
+    margin-bottom:15px;
+}
+
+.alert-item i{
+    font-size:22px;
+    color:#ff9800;
+    margin-top:3px;
+}
+
+.alert-item div{
+    flex:1;
+}
+
+.alert-item strong{
+    display:block;
+    font-size:16px;
+    color:#d32f2f;
+    margin-bottom:6px;
+}
+
+.alert-item p{
+    margin:0;
+    color:#444;
+    font-size:14px;
+    line-height:1.6;
+}

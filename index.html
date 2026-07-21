@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Water Quality Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+</head>
+<body><header class="header">
+
+    <div class="left">
+
+        <img src="asset/images/main_logo.png" alt="main_logo">
+
+        <div>
+
+            <h1>IoT Based Water Quality Management System</h1>
+
+            <p>Smart Agriculture Monitoring Dashboard</p>
+
+        </div>
+
+    </div>
+
+    <div class="right">
+
+        <span>📅 17 July 2026</span>
+
+        <span>🕒 04:30 PM</span>
+
+    </div>
+
+</header>
+<main class="container">
+    <section class="farm-card">
+
+    <h2>1. FARM INFORMATION</h2>
+    <div class="farm-grid">
+
+    <div class="info-box">
+
+    <div class="icon">
+        <i class="fa-solid fa-user"></i>
+    </div>
+
+    <div>
+        <h3>Farmer Name</h3>
+        <p>Praveen Kumar</p>
+    </div>
+
+</div>
+
+    <div class="info-box">
+    <div class="icon">
+        <i class="fa-solid fa-seedling"></i>
+    </div>
+
+    <div>
+        <h3>Farm ID</h3>
+        <p>FARM-2025-1187</p>
+    </div>
+</div>
+
+    <div class="info-box">
+    <div class="icon">
+        <i class="fa-solid fa-location-dot"></i>
+    </div>
+
+    <div>
+        <h3>Village</h3>
+        <p>Rampur</p>
+    </div>
+</div>
+
+    <div class="info-box">
+    <div class="icon">
+        <i class="fa-regular fa-clock"></i>
+    </div>
+
+    <div>
+        <h3>Last Updated</h3>
+        <p>17 Jul 2026 04:30 PM</p>
+    </div>
+</div>
+
+    <div class="info-box">
+    <div class="icon">
+        <i class="fa-solid fa-microchip"></i>
+    </div>
+
+    <div>
+        <h3>Device ID</h3>
+        <p>ESP32-AGRI-0024</p>
+    </div>
+</div>
+
+</div>
+
+</section>
+<section class="water-card">
+
+    <h2>2. LIVE WATER QUALITY</h2>
+    <div class="sensor-grid">
+
+    <div class="sensor-card">
+        <h3>🌡 Temperature</h3>
+        <h1>33.5</h1>
+        <p>°C</p>
+    </div>
+
+    <div class="sensor-card">
+        <h3>💧 pH</h3>
+        <h1>9.0</h1>
+        <p>pH</p>
+    </div>
+
+    <div class="sensor-card">
+        <h3>🫧 Dissolved Oxygen</h3>
+        <h1>4.2</h1>
+        <p>mg/L</p>
+    </div>
+
+    
+    <div class="sensor-card">
+    <h3>
+        <i class="fa-solid fa-droplet"></i>
+        TDS
+    </h3>
+
+    <div class="sensor-value">
+        <h1>450</h1>
+    </div>
+
+    <div class="sensor-unit">
+        <p>mg/L</p>
+    </div>
+</div>
+
+</div>
+    
+
+</section>
+</section>
+
+<section class="device-card">
+
+    <h2>3. DEVICE STATUS</h2>
+
+    <div class="device-grid">
+
+    <div class="device-item">
+        <i class="fa-solid fa-microchip"></i>
+        <h3>ESP32 Status</h3>
+        <p class="online">● Online</p>
+    </div>
+
+    <div class="device-item">
+        <i class="fa-solid fa-battery-three-quarters"></i>
+        <h3>Battery</h3>
+        <p>84%</p>
+    </div>
+
+    <div class="device-item">
+        <i class="fa-solid fa-cloud"></i>
+        <h3>Cloud Status</h3>
+        <p class="online">Connected</p>
+    </div>
+
+    <div class="device-item">
+        <i class="fa-solid fa-solar-panel"></i>
+        <h3>Solar Panel</h3>
+        <p class="online">Charging</p>
+    </div>
+
+</div>
+
+</section>
+
+<section class="alert-card">
+
+    <h2>4. ALERTS</h2>
+
+    <div class="alerts-card">
+    <h2><i class="fa-solid fa-triangle-exclamation"></i> Alerts & Recommended Actions</h2>
+
+    <div class="alert-item">
+        <i class="fa-solid fa-circle-exclamation"></i>
+        <div>
+            <strong>pH High (9.0)</strong>
+            <p>Action: Apply gypsum, add organic manure, and perform partial water exchange.</p>
+        </div>
+    </div>
+
+    <div class="alert-item">
+        <i class="fa-solid fa-circle-exclamation"></i>
+        <div>
+            <strong>Dissolved Oxygen Low (4.2 mg/L)</strong>
+            <p>Action: Start aeration, reduce feeding and stocking density, and exchange water if required.</p>
+        </div>
+    </div>
+
+    <div class="alert-item">
+        <i class="fa-solid fa-circle-exclamation"></i>
+        <div>
+            <strong>Temperature High (33.5°C)</strong>
+            <p>Action: Increase aeration, maintain water depth, provide shade, and exchange water if needed.</p>
+        </div>
+    </div>
+
+    <div class="alert-item">
+        <i class="fa-solid fa-circle-exclamation"></i>
+        <div>
+            <strong>TDS High (450 mg/L)</strong>
+            <p>Action: Dilute with fresh water, avoid runoff contamination, and monitor salinity sources.</p>
+        </div>
+    </div>
+
+</div>
+</section>
+</section>
+
+</main>
+</main>
+</body>
+</html>
