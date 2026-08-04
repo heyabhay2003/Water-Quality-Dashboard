@@ -419,6 +419,56 @@ grid-template-columns:1fr;
 
 .sensor-header h3 {
     margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: #1a1a1a;
+}
+
+/* Bottom lock alignment */
+.sensor-value {
+    margin: 0;
+    margin-top: auto; /* Absolute safety lock pushing values downward */
+    font-size: 22px;
+    font-weight: bold;
+}
+/* Container for your card row */
+.sensor-grid {
+    display: flex;
+    gap: 16px; 
+    flex-wrap: wrap; /* Allows wrap adjustments on smaller monitor layouts */
+}
+
+/* Updated individual layout cards */
+.sensor-card {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 20px;
+    width: 220px;       /* Match your desired fixed horizontal card width */
+    min-height: 250px;  /* Locks all card baselines to an identical height */
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    
+    /* ALIGNMENT FIX ENGINE */
+    display: flex;
+    flex-direction: column;         /* Arranges header items up top, numerical outputs down below */
+    justify-content: space-between; /* Spreads out top elements away from bottom values */
+    align-items: center;            /* Perfectly centers all assets horizontally */
+    text-align: center;
+}
+
+/* Direct stack adjustments for icons and headers */
+.sensor-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px; /* Uniform blank space below the droplet icon */
+}
+
+.sensor-header i {
+    font-size: 24px; /* Easily scale up your droplet symbols */
+}
+
+.sensor-header h3 {
+    margin: 0;
     font-size: 25px;
     font-weight: 600;
     color: #1a1a1a;
@@ -431,7 +481,6 @@ grid-template-columns:1fr;
     font-size: 22px;
     font-weight: bold;
 }
-
 /* 1. Ensure the grid container expands to use 100% of the row's available height */
 .sensor-grid {
     display: flex;
