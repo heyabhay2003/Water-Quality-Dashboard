@@ -1,0 +1,23 @@
+{
+  "farmInfo": {
+    "farmerName": "Rahul Singh",
+    "farmId": "FARM-0007",
+    "address": "Village Bhadokhar, Raebareli, Uttar Pradesh",
+    "deviceId": "ESP32-WQM-0007",
+    "lastUpdated": "27 Jul 2026 12:10 PM"
+  },
+
+  "waterQuality": {
+    "temperature": 28.5,
+    "ph": 7.2,
+    "do": 6.8,
+    "tds": 420
+  },
+
+  "deviceStatus": {
+    "battery": 92,
+    "esp32": "Online",
+    "cloud": "Connected",
+    "solar": "Charging"
+  }
+}

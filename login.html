@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Login</title>
+
+    <link rel="stylesheet" href="login.css">
+
+    <link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    
+
+</head>
+
+<body>
+
+    <div class="login-container">
+
+        <div class="login-card">
+
+            <h1>IoT Based Water Quality Management System</h1>
+
+            <p>Login to access your device data</p>
+
+            <form id="loginForm">
+
+    <input
+    type="text"
+    id="username"
+    placeholder="Username"
+    required
+>
+
+<div class="password-box">
+
+    <input
+        type="password"
+        id="password"
+        placeholder="Password"
+        required
+    >
+
+    <span id="togglePassword">
+
+        <i class="fa-solid fa-eye"></i>
+
+    </span>
+
+</div>
+
+    <button type="submit">
+        Login
+    </button>
+
+</form>
+
+            <p id="error"></p>
+
+        </div>
+
+    </div>
+
+    <script src="login.js"></script>
+
+</body>
+
+</html>

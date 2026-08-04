@@ -110,7 +110,7 @@ body{
 
 .sensor-card h3{
     font-size:30px;
-    margin-bottom:175px;
+    margin-bottom:250px;
 }
 
 .sensor-card h1{
@@ -298,4 +298,84 @@ body{
     color:#444;
     font-size:14px;
     line-height:1.6;
+}
+/* ==========================================
+   5. WATER QUALITY ANALYTICS
+========================================== */
+
+.analytics-section{
+    width:100%;
+    background:#fff;
+    margin-top:25px;
+    border-radius:18px;
+    padding:25px;
+    box-shadow:0 8px 20px rgba(0,0,0,.08);
+}
+
+.section-header{
+    margin-bottom:20px;
+}
+
+.section-header h2{
+    color:#2563eb;
+    font-size:28px;
+    font-weight:700;
+}
+
+.section-header p{
+    color:#666;
+    margin-top:5px;
+    font-size:15px;
+}
+
+.graph-grid{
+
+    display:grid;
+
+    grid-template-columns:repeat(2,1fr);
+
+    gap:25px;
+
+}
+
+.graph-card{
+
+    background:#fff;
+
+    border-radius:15px;
+
+    border:1px solid #e5e7eb;
+
+    padding:18px;
+
+    box-shadow:0 5px 12px rgba(0,0,0,.05);
+
+}
+
+.graph-card h3{
+
+    font-size:22px;
+
+    margin-bottom:15px;
+
+    color:#222;
+
+}
+
+.graph-card canvas{
+
+    width:100% !important;
+
+    height:420px !important;
+
+}
+
+@media(max-width:900px){
+
+.graph-grid{
+
+grid-template-columns:1fr;
+
+}
+
 }
