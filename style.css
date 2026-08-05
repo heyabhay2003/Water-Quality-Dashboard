@@ -433,3 +433,33 @@ grid-template-columns:1fr;
 
     width: 100%;
 }
+
+
+
+
+
+
+
+
+
+
+.temp-icon {
+    font-size: 80px;
+    margin-bottom: 15px;
+}
+
+.hot {
+    color: #ff2b2b;
+}
+
+.normal {
+    color: #ff9900;
+}
+
+.cold {
+    color: #1ea7ff;
+}
+
+.purple {
+    color: #b97aff;
+}
