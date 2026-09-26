@@ -1,12 +1,17 @@
+// ============================================================
+// LOGIN PROTECTION
+// ============================================================
+
 const farmId = sessionStorage.getItem("farmId");
+
 if (!farmId) {
     window.location.href = "login.html";
 }
-/// iske uper jo hai vo login k liye hai///
 
-// ===============================
+
+// ============================================================
 // LIVE DATE & TIME
-// ===============================
+// ============================================================
 
 function updateDateTime() {
 
@@ -26,611 +31,1508 @@ function updateDateTime() {
         second: "2-digit"
     });
 
-    document.getElementById("currentDate").innerHTML = "📅 " + date;
-    document.getElementById("currentTime").innerHTML = "🕒 " + time;
+    document.getElementById("currentDate").innerHTML =
+        "📅 " + date;
+
+    document.getElementById("currentTime").innerHTML =
+        "🕒 " + time;
 }
 
 updateDateTime();
 
-setInterval(updateDateTime,1000);
+setInterval(updateDateTime, 1000);
 
-// ===============================
-// LOAD SENSOR DATA
-// ===============================
 
-async function loadSensorData() {
+// ============================================================
+// FIREBASE
+// ============================================================
 
-    const response = await fetch("data.json");
-    const data = await response.json();
+import {
+    ref,
+    onValue
+} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-database.js";
 
-    // Farm Information
-    document.getElementById("farmerName").innerHTML = data.farmInfo.farmerName;
-    document.getElementById("farmId").innerHTML = data.farmInfo.farmId;
-    document.getElementById("address").innerHTML = data.farmInfo.address;
-    document.getElementById("deviceId").innerHTML = data.farmInfo.deviceId;
-    document.getElementById("lastUpdated").innerHTML = data.farmInfo.lastUpdated;
+const database = window.firebaseDatabase;
 
-    // Water Quality
-    document.getElementById("temperature").innerHTML = data.waterQuality.temperature + " °C";
-    document.getElementById("ph").innerHTML = data.waterQuality.ph;
-    document.getElementById("do").innerHTML = data.waterQuality.do + " mg/L";
-    document.getElementById("tds").innerHTML = data.waterQuality.tds + " mg/L";
 
-    // Device Status
-    document.getElementById("battery").innerHTML = data.deviceStatus.battery + "%";
-    document.getElementById("espStatus").innerHTML = data.deviceStatus.esp32;
-    document.getElementById("cloudStatus").innerHTML = data.deviceStatus.cloud;
-    document.getElementById("solarStatus").innerHTML = data.deviceStatus.solar;
+// ============================================================
+// LIVE FARM DATA
+// ============================================================
 
-    generateAlerts(data.waterQuality);
-}
+const farmDataRef = ref(database, "farmData");
 
-// Load immediately
-loadSensorData();
 
-// Reload every 5 seconds
-setInterval(loadSensorData, 5000);
+// ============================================================
+// RECEIVE REALTIME FARM DATA
+// ============================================================
 
-// ===============================
-// ===============================
-// DEMO SENSOR SIMULATION
-// ===============================
+onValue(farmDataRef, (snapshot) => {
 
-function updateDemoData() {
+    const data = snapshot.val();
 
-    fetch("data.json")
-        .then(response => response.json())
-        .then(data => {
+    if (!data) {
+        console.log("No data found in Firebase.");
+        return;
+    }
 
-            // Water Quality
-            data.waterQuality.temperature += (Math.random() - 0.5) * 0.8;
-            data.waterQuality.ph += (Math.random() - 0.5) * 0.5;
-            data.waterQuality.do += (Math.random() - 0.5) * 0.2;
-            data.waterQuality.tds += Math.floor((Math.random() - 0.5) * 10);
+    console.log("Firebase Live Data:", data);
+
+
+    // ========================================================
+    // FARM INFORMATION
+    // ========================================================
+
+    if (data.farmInfo) {
+
+        document.getElementById("farmerName").innerHTML =
+            data.farmInfo.farmerName || "--";
+
+        document.getElementById("farmId").innerHTML =
+            data.farmInfo.farmId || "--";
+
+        document.getElementById("address").innerHTML =
+            data.farmInfo.address || "--";
+
+        document.getElementById("deviceId").innerHTML =
+            data.farmInfo.deviceId || "--";
+
+        document.getElementById("lastUpdated").innerHTML =
+            data.farmInfo.lastUpdated || "--";
+    }
+
+
+    // ========================================================
+    // LIVE WATER QUALITY
+    // ========================================================
+
+    if (data.waterQuality) {
+
+        const water = data.waterQuality;
+
+
+        // -------------------------
+        // Temperature
+        // -------------------------
+
+        if (water.temperature !== undefined) {
 
             document.getElementById("temperature").innerHTML =
-                data.waterQuality.temperature.toFixed(1) + " °C";
+                Number(water.temperature).toFixed(1) + " °C";
+        }
+
+
+        // -------------------------
+        // pH
+        // -------------------------
+
+        if (water.ph !== undefined) {
 
             document.getElementById("ph").innerHTML =
-                data.waterQuality.ph.toFixed(1);
+                Number(water.ph).toFixed(1);
+        }
+
+
+        // -------------------------
+        // Dissolved Oxygen
+        // -------------------------
+
+        if (water.do !== undefined) {
 
             document.getElementById("do").innerHTML =
-                data.waterQuality.do.toFixed(1) + " mg/L";
+                Number(water.do).toFixed(1) + " mg/L";
+        }
 
-            document.getElementById("tds").innerHTML =
-                Math.round(data.waterQuality.tds) + " mg/L";
 
-            // Battery
-            data.deviceStatus.battery += Math.floor((Math.random() - 0.5) * 3);
-            data.deviceStatus.battery = Math.max(20, Math.min(100, data.deviceStatus.battery));
+        // -------------------------
+        // Electrical Conductivity
+        // -------------------------
 
-            // ESP32 Status
-            const espStatus = ["Online", "Offline", "Restarting"];
-            data.deviceStatus.esp32 = espStatus[Math.floor(Math.random() * espStatus.length)];
+        if (water.ec !== undefined) {
 
-            // Cloud Status
-            const cloudStatus = ["Connected", "Disconnected", "Syncing"];
-            data.deviceStatus.cloud = cloudStatus[Math.floor(Math.random() * cloudStatus.length)];
+            const ecElement =
+                document.getElementById("EC");
 
-            // Solar Status
-            const solarStatus = ["Charging", "Idle", "Low Sunlight"];
-            data.deviceStatus.solar = solarStatus[Math.floor(Math.random() * solarStatus.length)];
+            if (ecElement) {
 
-            // Update Dashboard
-            document.getElementById("battery").innerHTML = data.deviceStatus.battery + "%";
-            document.getElementById("espStatus").innerHTML = data.deviceStatus.esp32;
-            document.getElementById("cloudStatus").innerHTML = data.deviceStatus.cloud;
-            document.getElementById("solarStatus").innerHTML = data.deviceStatus.solar;
+                ecElement.innerHTML =
+                    Math.round(Number(water.ec)) +
+                    " µS/cm";
+            }
+        }
 
-            generateAlerts(data.waterQuality);
 
-        });
+        // Generate alerts
+        generateAlerts(water);
+    }
 
-}
 
-setInterval(updateDemoData, 3000);
+    // ========================================================
+    // DEVICE STATUS
+    // ========================================================
+
+    if (data.deviceStatus) {
+
+        const device = data.deviceStatus;
+
+
+        if (device.battery !== undefined) {
+
+            document.getElementById("battery").innerHTML =
+                device.battery + "%";
+        }
+
+
+        if (device.esp32 !== undefined) {
+
+            document.getElementById("espStatus").innerHTML =
+                device.esp32;
+        }
+
+
+        if (device.cloud !== undefined) {
+
+            document.getElementById("cloudStatus").innerHTML =
+                device.cloud;
+        }
+
+
+        if (device.solar !== undefined) {
+
+            document.getElementById("solarStatus").innerHTML =
+                device.solar;
+        }
+    }
+
+});
+
+
+// ============================================================
+// FIREBASE CONNECTION TEST
+// ============================================================
+
+console.log("Firebase Realtime Database connected.");
+
+
+// ============================================================
+// ALERT SYSTEM
+// ============================================================
 
 function generateAlerts(data) {
 
     let alerts = "";
 
-    // ===========================
+
+    // ========================================================
     // pH
-    // ===========================
+    // ========================================================
 
-    if (data.ph < 7.0) {
-        alerts += `
-        <div class="alert-item">
-            <i class="fa-solid fa-circle-exclamation"></i>
-            <div>
-                <strong>pH Low (${data.ph.toFixed(2)})</strong>
-                <p>Action: Apply agricultural lime (CaCO₃), dolomite and reduce organic load.</p>
-            </div>
-        </div>`;
+    if (data.ph !== undefined) {
+
+        if (data.ph < 7.0) {
+
+            alerts += `
+            <div class="alert-item">
+
+                <i class="fa-solid fa-circle-exclamation"></i>
+
+                <div>
+
+                    <strong>
+                        pH Low (${Number(data.ph).toFixed(2)})
+                    </strong>
+
+                    <p>
+                        Action: Apply agricultural lime (CaCO₃),
+                        dolomite and reduce organic load.
+                    </p>
+
+                </div>
+
+            </div>`;
+        }
+
+        else if (data.ph > 8.5) {
+
+            alerts += `
+            <div class="alert-item">
+
+                <i class="fa-solid fa-circle-exclamation"></i>
+
+                <div>
+
+                    <strong>
+                        pH High (${Number(data.ph).toFixed(2)})
+                    </strong>
+
+                    <p>
+                        Action: Apply gypsum, add organic manure
+                        and perform partial water exchange.
+                    </p>
+
+                </div>
+
+            </div>`;
+        }
     }
 
-    else if (data.ph > 8.5) {
-        alerts += `
-        <div class="alert-item">
-            <i class="fa-solid fa-circle-exclamation"></i>
-            <div>
-                <strong>pH High (${data.ph.toFixed(2)})</strong>
-                <p>Action: Apply gypsum, add organic manure and perform partial water exchange.</p>
-            </div>
-        </div>`;
+
+    // ========================================================
+    // DISSOLVED OXYGEN
+    // ========================================================
+
+    if (data.do !== undefined) {
+
+        if (data.do < 5) {
+
+            alerts += `
+            <div class="alert-item">
+
+                <i class="fa-solid fa-circle-exclamation"></i>
+
+                <div>
+
+                    <strong>
+                        Dissolved Oxygen Low
+                        (${Number(data.do).toFixed(1)} mg/L)
+                    </strong>
+
+                    <p>
+                        Action: Start aeration, reduce feeding
+                        & stocking density and exchange water.
+                    </p>
+
+                </div>
+
+            </div>`;
+        }
+
+        else if (data.do > 8) {
+
+            alerts += `
+            <div class="alert-item">
+
+                <i class="fa-solid fa-circle-exclamation"></i>
+
+                <div>
+
+                    <strong>
+                        Dissolved Oxygen High
+                        (${Number(data.do).toFixed(1)} mg/L)
+                    </strong>
+
+                    <p>
+                        Action: Monitor for gas supersaturation.
+                    </p>
+
+                </div>
+
+            </div>`;
+        }
     }
 
-    // ===========================
-    // Dissolved Oxygen
-    // ===========================
 
-    if (data.do < 5) {
-        alerts += `
-        <div class="alert-item">
-            <i class="fa-solid fa-circle-exclamation"></i>
-            <div>
-                <strong>Dissolved Oxygen Low (${data.do.toFixed(1)} mg/L)</strong>
-                <p>Action: Start aeration, reduce feeding & stocking density and exchange water.</p>
-            </div>
-        </div>`;
+    // ========================================================
+    // TEMPERATURE
+    // ========================================================
+
+    if (data.temperature !== undefined) {
+
+        if (data.temperature < 24) {
+
+            alerts += `
+            <div class="alert-item">
+
+                <i class="fa-solid fa-circle-exclamation"></i>
+
+                <div>
+
+                    <strong>
+                        Temperature Low
+                        (${Number(data.temperature).toFixed(1)}°C)
+                    </strong>
+
+                    <p>
+                        Action: Reduce feeding and maintain
+                        deeper water.
+                    </p>
+
+                </div>
+
+            </div>`;
+        }
+
+        else if (data.temperature > 32) {
+
+            alerts += `
+            <div class="alert-item">
+
+                <i class="fa-solid fa-circle-exclamation"></i>
+
+                <div>
+
+                    <strong>
+                        Temperature High
+                        (${Number(data.temperature).toFixed(1)}°C)
+                    </strong>
+
+                    <p>
+                        Action: Increase aeration, maintain water
+                        depth, provide shading and exchange water.
+                    </p>
+
+                </div>
+
+            </div>`;
+        }
     }
 
-    else if (data.do > 8) {
-        alerts += `
-        <div class="alert-item">
-            <i class="fa-solid fa-circle-exclamation"></i>
-            <div>
-                <strong>Dissolved Oxygen High (${data.do.toFixed(1)} mg/L)</strong>
-                <p>Action: Monitor for gas supersaturation.</p>
-            </div>
-        </div>`;
-    }
 
-    // ===========================
-    // Temperature
-    // ===========================
-
-    if (data.temperature < 24) {
-        alerts += `
-        <div class="alert-item">
-            <i class="fa-solid fa-circle-exclamation"></i>
-            <div>
-                <strong>Temperature Low (${data.temperature.toFixed(1)}°C)</strong>
-                <p>Action: Reduce feeding and maintain deeper water.</p>
-            </div>
-        </div>`;
-    }
-
-    else if (data.temperature > 32) {
-        alerts += `
-        <div class="alert-item">
-            <i class="fa-solid fa-circle-exclamation"></i>
-            <div>
-                <strong>Temperature High (${data.temperature.toFixed(1)}°C)</strong>
-                <p>Action: Increase aeration, maintain water depth, provide shading and exchange water.</p>
-            </div>
-        </div>`;
-    }
-
-    // ===========================
-    // TDS
-    // ===========================
-
-    if (data.tds < 50) {
-        alerts += `
-        <div class="alert-item">
-            <i class="fa-solid fa-circle-exclamation"></i>
-            <div>
-                <strong>TDS Low (${Math.round(data.tds)} mg/L)</strong>
-                <p>Action: Add fertilizers and check alkalinity & hardness.</p>
-            </div>
-        </div>`;
-    }
-
-    else if (data.tds > 400) {
-        alerts += `
-        <div class="alert-item">
-            <i class="fa-solid fa-circle-exclamation"></i>
-            <div>
-                <strong>TDS High (${Math.round(data.tds)} mg/L)</strong>
-                <p>Action: Dilute through water exchange, avoid runoff contamination and check alkalinity.</p>
-            </div>
-        </div>`;
-    }
-
-    // ===========================
-    // All Normal
-    // ===========================
+    // ========================================================
+    // ALL NORMAL
+    // ========================================================
 
     if (alerts === "") {
 
         alerts = `
         <div class="alert-item">
+
             <i class="fa-solid fa-circle-check"></i>
+
             <div>
-                <strong>Water Quality Normal</strong>
-                <p>All parameters are within the optimum range.</p>
+
+                <strong>
+                    Water Quality Normal
+                </strong>
+
+                <p>
+                    All parameters are within the optimum range.
+                </p>
+
             </div>
+
         </div>`;
     }
 
-    document.getElementById("alertsContainer").innerHTML = alerts;
 
+    document.getElementById("alertsContainer").innerHTML =
+        alerts;
 }
 
-///Here we will be plotting the graphs for the water quality parameters using Chart.js///
 
-/* ==========================================================
-        WATER QUALITY CHART ENGINE
-========================================================== */
+// ============================================================
+// ============================================================
+// WATER QUALITY ANALYTICS
+// ============================================================
+// ============================================================
 
-Chart.register(ChartDataLabels);
 
-const timeLabels = [
-    "01 AM","03 AM","05 AM","07 AM",
-    "09 AM","11 AM","01 PM","03 PM",
-    "05 PM","07 PM","09 PM","11 PM"
+// Firebase history reference
+
+const historyRef = ref(database, "waterHistory");
+
+
+// ============================================================
+// CHART VARIABLES
+// ============================================================
+
+let temperatureChart = null;
+let phChart = null;
+let ecChart = null;
+let doChart = null;
+
+
+// ============================================================
+// HOURS
+// ============================================================
+
+const hours = [
+
+    "00:00",
+    "01:00",
+    "02:00",
+    "03:00",
+    "04:00",
+    "05:00",
+    "06:00",
+    "07:00",
+    "08:00",
+    "09:00",
+    "10:00",
+    "11:00",
+    "12:00",
+    "13:00",
+    "14:00",
+    "15:00",
+    "16:00",
+    "17:00",
+    "18:00",
+    "19:00",
+    "20:00",
+    "21:00",
+    "22:00",
+    "23:00"
 ];
 
-/* -----------------------------
-   Demo Data
-------------------------------*/
 
-const temperatureData=[26.2,26.5,27.1,28.0,29.1,31.0,33.2,34.0,32.4,29.5,28.6,28.4];
+// Display labels
 
-const phData=[7.3,7.4,7.4,7.5,7.6,7.8,8.2,8.6,8.3,7.8,7.5,7.4];
+const displayHours = [
 
-const tdsData=[260,275,290,315,350,390,430,470,420,360,310,295];
+    "12 AM",
+    "1 AM",
+    "2 AM",
+    "3 AM",
+    "4 AM",
+    "5 AM",
+    "6 AM",
+    "7 AM",
+    "8 AM",
+    "9 AM",
+    "10 AM",
+    "11 AM",
+    "12 PM",
+    "1 PM",
+    "2 PM",
+    "3 PM",
+    "4 PM",
+    "5 PM",
+    "6 PM",
+    "7 PM",
+    "8 PM",
+    "9 PM",
+    "10 PM",
+    "11 PM"
+];
 
-const doData=[6.3,6.2,6.1,6.0,6.2,6.5,6.8,6.9,6.8,6.7,6.6,6.5];
+
+// ============================================================
+// GET LAST 7 DATES
+// ============================================================
+
+function getPreviousSevenDates() {
+
+    const dates = [];
+
+    const today = new Date();
+
+    today.setHours(0, 0, 0, 0);
 
 
-/* ==========================================================
-        CREATE SENSOR CHART
-========================================================== */
+    // Previous 7 completed days
 
-function createSensorChart(config){
+    for (let i = 7; i >= 1; i--) {
 
-    return new Chart(
+        const date = new Date(today);
 
-        document.getElementById(config.id),
+        date.setDate(today.getDate() - i);
 
-        {
+        dates.push(
+            formatDate(date)
+        );
+    }
 
-            type:"line",
+    return dates;
+}
 
-            data:{
 
-                labels:timeLabels,
+// ============================================================
+// FORMAT DATE
+// ============================================================
 
-                datasets:[
+function formatDate(date) {
 
-                    {
+    const year =
+        date.getFullYear();
 
-    label: config.id,
+    const month =
+        String(date.getMonth() + 1)
+            .padStart(2, "0");
 
-    data: config.data,
+    const day =
+        String(date.getDate())
+            .padStart(2, "0");
 
-    borderWidth: 3,
+    return `${year}-${month}-${day}`;
+}
 
-    tension: 0.4,
 
-    fill: false,
+// ============================================================
+// LINEAR REGRESSION
+// ============================================================
 
-    pointRadius: 6,
+function linearRegression(values) {
 
-    pointHoverRadius: 8,
+    if (!values || values.length === 0) {
+        return null;
+    }
 
-    pointBorderWidth: 2,
+    if (values.length === 1) {
+        return values[0];
+    }
 
-    pointBorderColor: (ctx) => {
 
-        const value = ctx.raw;
+    let sumX = 0;
+    let sumY = 0;
+    let sumXY = 0;
+    let sumXX = 0;
 
-        if (value > config.upper || value < config.lower)
-            return "#ef4444";
+    for (let i = 0; i < values.length; i++) {
 
-        return "#22c55e";
-    },
+        const x = i;
+        const y = Number(values[i]);
 
-    pointBackgroundColor: (ctx) => {
+        sumX += x;
+        sumY += y;
+        sumXY += x * y;
+        sumXX += x * x;
+    }
 
-        const value = ctx.raw;
 
-        if (value > config.upper || value < config.lower)
-            return "#ef4444";
+    const n = values.length;
 
-        return "#22c55e";
-    },
 
-    segment: {
+    const denominator =
+        (n * sumXX) -
+        (sumX * sumX);
 
-        borderColor: (ctx) => {
 
-            const y1 = ctx.p0.parsed.y;
-            const y2 = ctx.p1.parsed.y;
+    if (denominator === 0) {
+
+        return values[values.length - 1];
+    }
+
+
+    const slope =
+        ((n * sumXY) -
+        (sumX * sumY)) /
+        denominator;
+
+
+    const intercept =
+        (sumY - slope * sumX) /
+        n;
+
+
+    // Predict next value
+
+    const prediction =
+        intercept +
+        slope * n;
+
+
+    return prediction;
+}
+
+
+// ============================================================
+// GET PREDICTION FOR EACH HOUR
+// ============================================================
+
+function calculatePredictions(history, parameter) {
+
+    const dates =
+        getPreviousSevenDates();
+
+    const predictions = [];
+
+
+    for (let hourIndex = 0;
+         hourIndex < hours.length;
+         hourIndex++) {
+
+
+        const hour =
+            hours[hourIndex];
+
+
+        const values = [];
+
+
+        // Collect same-hour readings
+        // from previous 7 days
+
+        dates.forEach(date => {
 
             if (
-                y1 > config.upper ||
-                y2 > config.upper ||
-                y1 < config.lower ||
-                y2 < config.lower
+                history[date] &&
+                history[date][hour] &&
+                history[date][hour][parameter] !== undefined
             ) {
 
-                return "#ef4444";
+                const value =
+                    Number(
+                        history[date][hour][parameter]
+                    );
 
+                if (!isNaN(value)) {
+
+                    values.push(value);
+                }
             }
 
-            return "#22c55e";
+        });
 
+
+        if (values.length >= 2) {
+
+            predictions.push(
+                linearRegression(values)
+            );
+
+        } else {
+
+            predictions.push(null);
         }
-
     }
 
-},
 
-                    {
-
-    label:"Upper Limit",
-
-    data:new Array(12).fill(config.upper),
-
-    borderColor:"#ef4444",
-
-    borderDash:[8,6],
-
-    borderWidth:2,
-
-    pointRadius:0,
-
-    datalabels:{
-
-        align:"right",
-
-        anchor:"end",
-
-        color:"#ef4444",
-
-        formatter:(value,ctx)=>{
-
-            if(ctx.dataIndex===11){
-
-                return "Upper";
-
-            }
-
-            return "";
-
-        }
-
-    }
-
-},
-
-                    {
-
-    label:"Lower Limit",
-
-    data:new Array(12).fill(config.lower),
-
-    borderColor:"#2563eb",
-
-    borderDash:[8,6],
-
-    borderWidth:2,
-
-    pointRadius:0,
-
-    datalabels:{
-
-        align:"right",
-
-        anchor:"end",
-
-        color:"#2563eb",
-
-        formatter:(value,ctx)=>{
-
-            if(ctx.dataIndex===11){
-
-                return "Lower";
-
-            }
-
-            return "";
-
-        }
-
-    }
-
+    return predictions;
 }
 
-                ]
 
-            },
+// ============================================================
+// GET TODAY ACTUAL READINGS
+// ============================================================
 
-            options:{
+function getTodayActual(history, parameter) {
 
-                responsive:true,
+    const today =
+        formatDate(new Date());
 
-                maintainAspectRatio:false,
 
-                plugins:{
+    const actual = [];
 
-    legend:{
-        display:false
-    },
 
-    tooltip:{
+    for (let i = 0; i < hours.length; i++) {
 
-        backgroundColor:"#1f2937",
+        const hour =
+            hours[i];
 
-        titleColor:"#fff",
 
-        bodyColor:"#fff",
+        if (
+            history[today] &&
+            history[today][hour] &&
+            history[today][hour][parameter] !== undefined
+        ) {
 
-        padding:12,
+            const value =
+                Number(
+                    history[today][hour][parameter]
+                );
 
-        cornerRadius:10,
 
-        displayColors:false,
+            actual.push(
+                isNaN(value) ? null : value
+            );
 
-        callbacks:{
+        } else {
 
-            title:(items)=>{
+            // No reading yet
 
-                return "Time : " + items[0].label;
+            actual.push(null);
+        }
+    }
 
-            },
 
-            label:(item)=>{
+    return actual;
+}
 
-                return config.title + " : " + item.raw + " " + config.unit;
+
+// ============================================================
+// LIMIT PREDICTION TO TODAY'S TIME
+// ============================================================
+
+function limitPredictionToCurrentTime(predictions) {
+
+    const now =
+        new Date();
+
+    const currentHour =
+        now.getHours();
+
+
+    return predictions.map(
+        (value, index) => {
+
+            if (index <= currentHour) {
+
+                return value;
 
             }
 
+            return null;
         }
+    );
+}
 
-    },
 
-    datalabels:{
+// ============================================================
+// CREATE CHART
+// ============================================================
 
-                        color:"#444",
+function createChart(
 
-                        anchor:"end",
+    canvasId,
+    title,
+    unit,
+    actualData,
+    predictedData
 
-                        align:"top",
+) {
 
-                        font:{
-                            size:11,
-                            weight:"bold"
-                        },
+    const canvas =
+        document.getElementById(canvasId);
 
-                        formatter:(value,ctx)=>{
 
-                            if(ctx.datasetIndex===0)
-                                return value;
+    if (!canvas) {
 
-                            return "";
-                        }
+        console.error(
+            "Canvas not found:",
+            canvasId
+        );
 
-                    }
+        return null;
+    }
 
+
+    const ctx =
+        canvas.getContext("2d");
+
+
+    return new Chart(ctx, {
+
+        type: "line",
+
+        data: {
+
+            labels: displayHours,
+
+            datasets: [
+
+                // =========================================
+                // ACTUAL
+                // =========================================
+
+                {
+
+                    label: "Actual",
+
+                    data: actualData,
+
+                    borderColor: "#2563eb",
+
+                    backgroundColor:
+                        "rgba(37,99,235,0.10)",
+
+                    borderWidth: 3,
+
+                    pointRadius: 4,
+
+                    pointHoverRadius: 6,
+
+                    tension: 0.3,
+
+                    spanGaps: true
                 },
 
-                scales:{
 
-    x:{
+                // =========================================
+                // PREDICTED
+                // =========================================
 
-        grid:{
-            color:"#eef2f7"
+                {
+
+                    label: "Predicted",
+
+                    data: predictedData,
+
+                    borderColor: "#ef4444",
+
+                    backgroundColor:
+                        "rgba(239,68,68,0.10)",
+
+                    borderWidth: 2,
+
+                    borderDash: [7, 5],
+
+                    pointRadius: 3,
+
+                    pointHoverRadius: 5,
+
+                    tension: 0.3,
+
+                    spanGaps: true
+                }
+
+            ]
         },
 
-        ticks:{
-            color:"#555",
-            font:{
-                size:11,
-                weight:"600"
-            }
-        }
 
-    },
+        options: {
 
-    y:{
+            responsive: true,
 
-        suggestedMin: config.lower - config.step,
+            maintainAspectRatio: false,
 
-        suggestedMax: config.max + config.step,
 
-        grid:{
-            color:"#eef2f7"
-        },
+            interaction: {
 
-        ticks:{
-            stepSize:config.step,
-            color:"#555",
-            font:{
-                size:11,
-                weight:"600"
-            }
-        }
+                mode: "index",
 
-    }
-
-},
-animation:{
-
-    duration:1500,
-
-    easing:"easeInOutQuart"
-
-},
-
+                intersect: false
             },
 
-            plugins:[ChartDataLabels]
 
+            plugins: {
+
+                legend: {
+
+                    display: true,
+
+                    position: "top"
+                },
+
+
+                tooltip: {
+
+                    callbacks: {
+
+                        label: function(context) {
+
+                            if (
+                                context.parsed.y === null
+                            ) {
+
+                                return context.dataset.label +
+                                    ": No data";
+                            }
+
+
+                            return context.dataset.label +
+                                ": " +
+                                Number(
+                                    context.parsed.y
+                                ).toFixed(2) +
+                                " " +
+                                unit;
+                        }
+                    }
+                }
+            },
+
+
+            scales: {
+
+                x: {
+
+                    title: {
+
+                        display: true,
+
+                        text: "Time"
+                    }
+                },
+
+
+                y: {
+
+                    title: {
+
+                        display: true,
+
+                        text: unit
+                    },
+
+                    beginAtZero: false
+                }
+            }
         }
+    });
+}
 
+
+// ============================================================
+// UPDATE CHART
+// ============================================================
+
+function updateChart(
+
+    chart,
+    actualData,
+    predictedData
+
+) {
+
+    if (!chart) {
+        return;
+    }
+
+
+    chart.data.datasets[0].data =
+        actualData;
+
+
+    chart.data.datasets[1].data =
+        predictedData;
+
+
+    chart.update();
+}
+
+
+// ============================================================
+// PROCESS FIREBASE HISTORY
+// ============================================================
+
+function processHistory(history) {
+
+    if (!history) {
+
+        console.log(
+            "No waterHistory found in Firebase."
+        );
+
+        return;
+    }
+
+
+    console.log(
+        "Water History:",
+        history
     );
+
+
+    // ========================================================
+    // ACTUAL DATA
+    // ========================================================
+
+    const temperatureActual =
+        getTodayActual(
+            history,
+            "temperature"
+        );
+
+
+    const phActual =
+        getTodayActual(
+            history,
+            "ph"
+        );
+
+
+    const doActual =
+        getTodayActual(
+            history,
+            "do"
+        );
+
+
+    const ecActual =
+        getTodayActual(
+            history,
+            "ec"
+        );
+
+
+    // ========================================================
+    // PREDICTIONS
+    // ========================================================
+
+    const temperaturePrediction =
+        calculatePredictions(
+            history,
+            "temperature"
+        );
+
+
+    const phPrediction =
+        calculatePredictions(
+            history,
+            "ph"
+        );
+
+
+    const doPrediction =
+        calculatePredictions(
+            history,
+            "do"
+        );
+
+
+    const ecPrediction =
+        calculatePredictions(
+            history,
+            "ec"
+        );
+
+
+    // ========================================================
+    // // ========================================================
+// SHOW FULL-DAY PREDICTIONS
+// Prediction is generated for all 24 hours
+// ========================================================
+
+const temperaturePredictedToday = temperaturePrediction;
+
+const phPredictedToday = phPrediction;
+
+const doPredictedToday = doPrediction;
+
+const ecPredictedToday = ecPrediction;
+
+    // ========================================================
+    // CREATE CHARTS
+    // ========================================================
+
+    if (!temperatureChart) {
+
+        temperatureChart =
+            createChart(
+                "temperatureChart",
+                "Temperature",
+                "°C",
+                temperatureActual,
+                temperaturePredictedToday
+            );
+
+    } else {
+
+        updateChart(
+            temperatureChart,
+            temperatureActual,
+            temperaturePredictedToday
+        );
+    }
+
+
+    if (!phChart) {
+
+        phChart =
+            createChart(
+                "phChart",
+                "pH",
+                "pH",
+                phActual,
+                phPredictedToday
+            );
+
+    } else {
+
+        updateChart(
+            phChart,
+            phActual,
+            phPredictedToday
+        );
+    }
+
+
+    if (!ecChart) {
+
+        ecChart =
+            createChart(
+                "ecChart",
+                "Electrical Conductivity",
+                "µS/cm",
+                ecActual,
+                ecPredictedToday
+            );
+
+    } else {
+
+        updateChart(
+            ecChart,
+            ecActual,
+            ecPredictedToday
+        );
+    }
+
+
+    if (!doChart) {
+
+        doChart =
+            createChart(
+                "doChart",
+                "Dissolved Oxygen",
+                "mg/L",
+                doActual,
+                doPredictedToday
+            );
+
+    } else {
+
+        updateChart(
+            doChart,
+            doActual,
+            doPredictedToday
+        );
+    }
+}
+
+
+// ============================================================
+// LISTEN TO WATER HISTORY
+// ============================================================
+
+onValue(historyRef, (snapshot) => {
+
+    const history =
+        snapshot.val();
+
+
+    processHistory(history);
+
+});
+
+
+// ============================================================
+// LOGOUT
+// ============================================================
+
+const logoutBtn =
+    document.getElementById("logoutBtn");
+
+
+if (logoutBtn) {
+
+    logoutBtn.addEventListener(
+        "click",
+        function() {
+
+            sessionStorage.removeItem(
+                "farmId"
+            );
+
+            window.location.href =
+                "login.html";
+        }
+    );
+}
+
+// ========================================================
+// DOWNLOAD SENSOR DATA
+// ========================================================
+
+const downloadDataBtn =
+    document.getElementById("downloadDataBtn");
+
+const downloadModal =
+    document.getElementById("downloadModal");
+
+const closeDownloadModal =
+    document.getElementById("closeDownloadModal");
+
+const generateCSVBtn =
+    document.getElementById("generateCSVBtn");
+
+const downloadFromDate =
+    document.getElementById("downloadFromDate");
+
+const downloadToDate =
+    document.getElementById("downloadToDate");
+
+const downloadError =
+    document.getElementById("downloadError");
+
+
+// --------------------------------------------------------
+// OPEN DOWNLOAD WINDOW
+// --------------------------------------------------------
+
+if (downloadDataBtn) {
+
+    downloadDataBtn.addEventListener("click", function () {
+
+        downloadError.textContent = "";
+
+        downloadModal.style.display = "flex";
+
+    });
 
 }
 
 
-/// $$$$$$$$$$$$$///
+// --------------------------------------------------------
+// CLOSE DOWNLOAD WINDOW
+// --------------------------------------------------------
+
+if (closeDownloadModal) {
+
+    closeDownloadModal.addEventListener("click", function () {
+
+        downloadModal.style.display = "none";
+
+    });
+
+}
 
 
-createSensorChart({
-    id:"temperatureChart",
-    title:"Temperature",
-    unit:"°C",
-    data:temperatureData,
-    lower:24,
-    upper:32,
-    max:35,
-    step:1
-});
+// --------------------------------------------------------
+// CLOSE WHEN CLICKING OUTSIDE BOX
+// --------------------------------------------------------
 
-createSensorChart({
-    id:"phChart",
-    title:"pH",
-    unit:"",
-    data:phData,
-    lower:7,
-    upper:8.5,
-    max:9,
-    step:0.5
-});
+if (downloadModal) {
 
-createSensorChart({
-    id:"tdsChart",
-    title:"TDS",
-    unit:"mg/L",
-    data:tdsData,
-    lower:50,
-    upper:400,
-    max:500,
-    step:50
-});
+    downloadModal.addEventListener("click", function (event) {
 
-createSensorChart({
-    id:"doChart",
-    title:"Dissolved Oxygen",
-    unit:"mg/L",
-    data:doData,
-    lower:5,
-    upper:8,
-    max:10,
-    step:1
-});
+        if (event.target === downloadModal) {
+
+            downloadModal.style.display = "none";
+
+        }
+
+    });
+
+}
 
 
-/// yahan se login and logout ka function hai///
+// ========================================================
+// GENERATE CSV
+// ========================================================
 
-function logout() {
+if (generateCSVBtn) {
 
-    sessionStorage.removeItem("farmId");
+    generateCSVBtn.addEventListener("click", async function () {
 
-    window.location.href = "login.html";
+        downloadError.textContent = "";
+
+        const fromDate = downloadFromDate.value;
+        const toDate = downloadToDate.value;
+
+
+        // ------------------------------------------------
+        // CHECK DATES
+        // ------------------------------------------------
+
+        if (!fromDate || !toDate) {
+
+            downloadError.textContent =
+                "Please select both From Date and To Date.";
+
+            return;
+        }
+
+
+        if (fromDate > toDate) {
+
+            downloadError.textContent =
+                "From Date cannot be later than To Date.";
+
+            return;
+        }
+
+
+        // ------------------------------------------------
+        // BUTTON STATUS
+        // ------------------------------------------------
+
+        generateCSVBtn.disabled = true;
+
+        generateCSVBtn.innerHTML =
+            '<i class="fa-solid fa-spinner fa-spin"></i> Preparing Data...';
+
+
+        try {
+
+            // ------------------------------------------------
+            // READ WATER HISTORY
+            // ------------------------------------------------
+
+            const historyRef =
+                ref(database, "waterHistory");
+
+            const snapshot =
+                await import(
+                    "https://www.gstatic.com/firebasejs/12.19.0/firebase-database.js"
+                ).then(({ get }) => get(historyRef));
+
+
+            const history =
+                snapshot.val();
+
+
+            if (!history) {
+
+                throw new Error(
+                    "No water history found in Firebase."
+                );
+
+            }
+
+
+            // ------------------------------------------------
+            // CREATE CSV ROWS
+            // ------------------------------------------------
+
+            const rows = [];
+
+            rows.push([
+                "Date",
+                "Time",
+                "Temperature (°C)",
+                "pH",
+                "Dissolved Oxygen (mg/L)",
+                "Electrical Conductivity (µS/cm)"
+            ]);
+
+
+            // ------------------------------------------------
+            // LOOP THROUGH DATES
+            // ------------------------------------------------
+
+            Object.keys(history)
+                .sort()
+                .forEach(date => {
+
+                    // Date filtering
+
+                    if (date < fromDate || date > toDate) {
+                        return;
+                    }
+
+
+                    const dayData = history[date];
+
+                    if (!dayData) {
+                        return;
+                    }
+
+
+                    // ------------------------------------------------
+                    // LOOP THROUGH HOURLY RECORDS
+                    // ------------------------------------------------
+
+                    Object.keys(dayData)
+                        .sort()
+                        .forEach(time => {
+
+                            const reading =
+                                dayData[time];
+
+                            if (!reading) {
+                                return;
+                            }
+
+
+                            rows.push([
+
+                                date,
+
+                                time,
+
+                                reading.temperature ?? "",
+
+                                reading.ph ?? "",
+
+                                reading.do ?? "",
+
+                                reading.ec ?? ""
+
+                            ]);
+
+                        });
+
+                });
+
+
+            // ------------------------------------------------
+            // CHECK WHETHER DATA EXISTS
+            // ------------------------------------------------
+
+            if (rows.length === 1) {
+
+                throw new Error(
+                    "No sensor data found for the selected date range."
+                );
+
+            }
+
+
+            // ------------------------------------------------
+            // CONVERT TO CSV
+            // ------------------------------------------------
+
+            const csv = rows
+                .map(row =>
+                    row.map(value => {
+
+                        const text =
+                            String(value);
+
+                        // Escape quotes
+
+                        return `"${text.replace(/"/g, '""')}"`;
+
+                    }).join(",")
+                )
+                .join("\r\n");
+
+
+            // ------------------------------------------------
+            // CREATE DOWNLOAD FILE
+            // ------------------------------------------------
+
+            const blob =
+                new Blob(
+                    [csv],
+                    {
+                        type: "text/csv;charset=utf-8;"
+                    }
+                );
+
+
+            const url =
+                URL.createObjectURL(blob);
+
+
+            const link =
+                document.createElement("a");
+
+            link.href = url;
+
+            link.download =
+                `WaterData_${fromDate}_to_${toDate}.csv`;
+
+
+            document.body.appendChild(link);
+
+            link.click();
+
+            document.body.removeChild(link);
+
+
+            URL.revokeObjectURL(url);
+
+
+            // ------------------------------------------------
+            // CLOSE MODAL
+            // ------------------------------------------------
+
+            downloadModal.style.display = "none";
+
+
+        } catch (error) {
+
+            console.error(
+                "CSV Download Error:",
+                error
+            );
+
+            downloadError.textContent =
+                error.message ||
+                "Unable to download data.";
+
+        }
+
+
+        // ------------------------------------------------
+        // RESET BUTTON
+        // ------------------------------------------------
+
+        generateCSVBtn.disabled = false;
+
+        generateCSVBtn.innerHTML =
+            '<i class="fa-solid fa-download"></i> Download CSV';
+
+    });
 
 }

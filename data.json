@@ -16,8 +16,8 @@
 
   "deviceStatus": {
     "battery": 92,
-    "esp32": "Online",
-    "cloud": "Connected",
+    "esp32": "offline",
+    "cloud": "not connected",
     "solar": "Charging"
   }
 }

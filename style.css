@@ -10,14 +10,15 @@ body{
     padding:20px;
 }
 
-.header{
-    background:white;
-    border-radius:18px;
-    padding:20px 30px;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    box-shadow:0 5px 15px rgba(0,0,0,0.1);
+.header {
+    background: white;
+    border-radius: 18px;
+    padding: 20px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 25px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
 }
 
 .left{
@@ -31,9 +32,10 @@ body{
     height:70px;
 }
 
-.left h1{
-    color:#0f2b75;
-    font-size:34px;
+.left h1 {
+    color: #0f2b75;
+    font-size: 30px;
+    white-space: nowrap;
 }
 
 .left p{
@@ -41,11 +43,21 @@ body{
     font-size:22px;
 }
 
-.right{
-    display:flex;
-    gap:30px;
-    font-size:20px;
-    color:#163a8c;
+.right {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 30px;
+    font-size: 20px;
+    color: #163a8c;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.right span {
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
 }
 .container{
     margin-top:20px;
@@ -435,14 +447,6 @@ grid-template-columns:1fr;
 }
 
 
-
-
-
-
-
-
-
-
 .temp-icon {
     font-size: 50px;
     margin-bottom: 15px;
@@ -462,4 +466,200 @@ grid-template-columns:1fr;
 
 .purple {
     color: #b97aff;
+}
+
+
+
+/* ===============================
+   LOGOUT BUTTON
+   =============================== */
+
+.logout-btn {
+    margin-left: 2px;
+    padding: 9px 16px;
+    border: none;
+    border-radius: 8px;
+    background: #dc3545;
+    color: white;
+    font-family: 'Poppins', sans-serif;
+    font-size: 14px;
+    font-weight: 300;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.logout-btn:hover {
+    background: #c82333;
+    transform: translateY(-1px);
+}
+
+.logout-btn i {
+    margin-right: 6px;
+}
+
+
+/* ===============================
+   DOWNLOAD DATA BUTTON
+================================ */
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+}
+
+.download-data-btn {
+    border: none;
+    background: #2563eb;
+    color: white;
+    padding: 11px 18px;
+    border-radius: 8px;
+    font-family: "Poppins", sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    transition: 0.2s ease;
+}
+
+.download-data-btn:hover {
+    background: #1d4ed8;
+    transform: translateY(-1px);
+}
+
+.download-data-btn i {
+    font-size: 14px;
+}
+
+
+/* =========================================
+   DOWNLOAD DATA MODAL
+========================================= */
+
+.download-modal {
+    display: none;
+    position: fixed;
+    z-index: 9999;
+    inset: 0;
+
+    background: rgba(0, 0, 0, 0.45);
+
+    justify-content: center;
+    align-items: center;
+}
+
+.download-box {
+    width: 480px;
+    max-width: 90%;
+
+    background: #ffffff;
+    border-radius: 14px;
+    padding: 25px;
+
+    box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+
+    font-family: "Poppins", sans-serif;
+}
+
+.download-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.download-header h2 {
+    margin: 0;
+    font-size: 20px;
+    color: #1f2937;
+}
+
+.download-header h2 i {
+    color: #2563eb;
+    margin-right: 8px;
+}
+
+.close-download {
+    border: none;
+    background: transparent;
+    font-size: 28px;
+    color: #6b7280;
+    cursor: pointer;
+}
+
+.close-download:hover {
+    color: #111827;
+}
+
+.download-description {
+    margin: 10px 0 22px;
+    color: #6b7280;
+    font-size: 13px;
+}
+
+.date-selection {
+    display: flex;
+    gap: 15px;
+}
+
+.date-field {
+    flex: 1;
+}
+
+.date-field label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #374151;
+}
+
+.date-field input {
+    width: 100%;
+    box-sizing: border-box;
+
+    padding: 10px;
+    border: 1px solid #d1d5db;
+    border-radius: 7px;
+
+    font-family: "Poppins", sans-serif;
+    font-size: 13px;
+}
+
+.date-field input:focus {
+    outline: none;
+    border-color: #2563eb;
+}
+
+.generate-csv-btn {
+    width: 100%;
+    margin-top: 22px;
+
+    border: none;
+    background: #2563eb;
+    color: white;
+
+    padding: 12px;
+    border-radius: 8px;
+
+    font-family: "Poppins", sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+
+    cursor: pointer;
+}
+
+.generate-csv-btn:hover {
+    background: #1d4ed8;
+}
+
+.download-error {
+    color: #dc2626;
+    font-size: 13px;
+    margin-top: 12px;
+    min-height: 18px;
 }

@@ -27,7 +27,12 @@
     <div class="right">
     <span id="currentDate">📅 17 July 2026</span>
     <span id="currentTime">🕒 04:30 PM</span>
-    </div>
+
+    <button id="logoutBtn" class="logout-btn">
+        <i class="fa-solid fa-right-from-bracket"></i>
+        Logout
+    </button>
+</div>
 </header>
 <main class="container">
     <section class="farm-card">
@@ -124,16 +129,16 @@
                 <i class="fas fa-temperature-low temp-icon cold"></i>
                 <h3>Dissolved Oxygen</h3>
             </div>
-            <h2 id="do" class="sensor-value">6.8 mg/L</h2>
+            <h2 id="do" class="sensor-value">6.8 µS/cm</h2>
         </div>
 
-        <!-- TDS Card -->
+        <!-- Electrical Conductivity Card -->
         <div class="sensor-card">
             <div class="sensor-header">
                 <i class="fas fa-temperature-half temp-icon purple"></i>
-                <h3>TDS</h3>
+                <h3>Electrical Conductivity</h3>
             </div>
-            <h2 id="tds" class="sensor-value">420 mg/L</h2>
+            <h2 id="EC" class="sensor-value">420 µS/cm</h2>
         </div>
 
     </div>
@@ -199,9 +204,22 @@
 <section class="analytics-section">
 
     <div class="section-header">
-        <h2><i class="fa-solid fa-chart-line"></i> Water Quality Analytics</h2>
-        <p>Today's Sensor Trends (01:00 AM - 11:00 PM)</p>
+
+    <div>
+        <h2>
+            <i class="fa-solid fa-chart-line"></i>
+            Water Quality Analytics
+        </h2>
+
+        <p>Today's Sensor Trends (12:00 AM - 11:00 PM)</p>
     </div>
+
+    <button id="downloadDataBtn" class="download-data-btn">
+        <i class="fa-solid fa-download"></i>
+        Download Sensor Data
+    </button>
+
+</div>
 
     <div class="graph-grid">
 
@@ -216,8 +234,8 @@
         </div>
 
         <div class="graph-card">
-            <h3><i class="fa-solid fa-flask"></i> TDS Trend</h3>
-            <canvas id="tdsChart"></canvas>
+            <h3><i class="fa-solid fa-flask"></i> Electrical Conductivity Trend</h3>
+            <canvas id="ecChart"></canvas>
         </div>
 
         <div class="graph-card">
@@ -227,10 +245,100 @@
 
     </div>
 </section>
+
+
+
+
+
+<!-- Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<!-- Chart.js Plugins -->
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3"></script>
 
-<script src="script.js"></script>
+<!-- Firebase -->
+<script type="module">
+    import { initializeApp } 
+        from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
+
+    import { getDatabase } 
+        from "https://www.gstatic.com/firebasejs/12.19.0/firebase-database.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyCaLT9sb1IRO-LkXeTzXnfUtrk6oDP2_XI",
+        authDomain: "iot-based-wqms-v1.firebaseapp.com",
+        databaseURL: "https://iot-based-wqms-v1-default-rtdb.asia-southeast1.firebasedatabase.app",
+        projectId: "iot-based-wqms-v1",
+        storageBucket: "iot-based-wqms-v1.firebasestorage.app",
+        messagingSenderId: "1069534883620",
+        appId: "1:1069534883620:web:687eb47ed9192872fdcdb1"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+
+    // Initialize Realtime Database
+    const database = getDatabase(app);
+
+    // Make database available to script.js
+    window.firebaseDatabase = database;
+</script>
+
+<!-- Your Dashboard JavaScript -->
+<script type="module" src="script.js"></script>
+
+
+
+
+<!-- ===============================
+     DOWNLOAD DATA POPUP
+================================ -->
+
+
+<div id="downloadModal" class="download-modal">
+
+    <div class="download-box">
+
+        <div class="download-header">
+            <h2>
+                <i class="fa-solid fa-file-csv"></i>
+                Download Sensor Data
+            </h2>
+
+            <button id="closeDownloadModal" class="close-download">
+                &times;
+            </button>
+        </div>
+
+        <p class="download-description">
+            Select the date range for the sensor data you want to download.
+        </p>
+
+        <div class="date-selection">
+
+            <div class="date-field">
+                <label for="downloadFromDate">From Date</label>
+                <input type="date" id="downloadFromDate">
+            </div>
+
+            <div class="date-field">
+                <label for="downloadToDate">To Date</label>
+                <input type="date" id="downloadToDate">
+            </div>
+
+        </div>
+
+        <div id="downloadError" class="download-error"></div>
+
+        <button id="generateCSVBtn" class="generate-csv-btn">
+            <i class="fa-solid fa-download"></i>
+            Download CSV
+        </button>
+
+    </div>
+
+</div>
+
 </body>
 </html>
